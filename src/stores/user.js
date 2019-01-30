@@ -6,6 +6,9 @@ class UserStore {
   @observable
   isLogin = false;
 
+  @observable
+  user = null;
+
   @action
   login(username, password) {
     return new Promise((resolve, reject) => {
@@ -42,6 +45,31 @@ class UserStore {
       cookie.remove('JWT', {path: '/'});
       this.isLogin = false;
       resolve();
+    })
+  }
+
+  @action
+  getUserData() {
+    return new Promise((resolve, reject) => {
+      const jwt = cookie.load('JWT');
+
+      if (this.isLogin) {
+        if (jwt) {
+          axios.get('/users', {
+            headers: {
+              Authorization: `Bearer ${jwt}`
+            }
+          }).then(res => {
+            this.isLogin = true;
+            this.user = res.data;
+            resolve(res);
+          }).catch(err => {
+            reject(err)
+          })
+        } else {
+          reject("Token is not exists");
+        }
+      }
     })
   }
 
