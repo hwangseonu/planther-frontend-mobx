@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {observer, inject} from 'mobx-react';
 import styled from 'styled-components';
 
 import Loading from "./Loading";
@@ -72,6 +73,8 @@ const Button = styled.button`
   }
 `;
 
+@inject("user")
+@observer
 class RegisterModal extends Component {
   state = {
     show: false,
@@ -107,9 +110,21 @@ class RegisterModal extends Component {
   }
 
   handleSubmit() {
+    const {user} = this.props;
     const {username, password, name, grade, cls, number} = this.state;
 
     if (username && password && name && grade && cls && number) {
+      this.setState({loading: true});
+      user.register(username, password, name, grade, cls, number).then(res => {
+        this.setState({loading: false});
+        alert("회원가입되었습니다.");
+        window.location.reload();
+      }).catch(err => {
+        this.setState({loading: false});
+        alert("회원가입에 실패했습니다.");
+      })
+    } else {
+      alert("빈칸이 있습니다.");
     }
   }
 
