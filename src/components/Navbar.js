@@ -66,7 +66,7 @@ class Navbar extends Component {
           <Menu>
             <Item style={{marginRight: '20px'}}>{/*TODO*/}</Item>
             <Item onClick={() => {
-              //TODO use mobx
+              user.logout().then(() => alert("로그아웃되었습니다."));
               window.location.reload();
             }}>로그아웃</Item>
           </Menu> :
