@@ -51,6 +51,11 @@ const Item = styled.span`
 @observer
 class Navbar extends Component {
 
+  componentDidMount() {
+    const {user} = this.props;
+    user.getUserData().catch(_ => {});
+  }
+
   render() {
     const {user} = this.props;
 
@@ -64,7 +69,7 @@ class Navbar extends Component {
         </Link>
         {user.isLogin ?
           <Menu>
-            <Item style={{marginRight: '20px'}}>{/*TODO*/}</Item>
+            <Item style={{marginRight: '20px'}}>{user.user.username}</Item>
             <Item onClick={() => {
               user.logout().then(() => alert("로그아웃되었습니다."));
               window.location.reload();

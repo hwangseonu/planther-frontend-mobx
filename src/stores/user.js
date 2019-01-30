@@ -7,10 +7,11 @@ class UserStore {
   isLogin = false;
 
   @observable
-  user = null;
+  user = {
+    username: ''
+  };
 
-  @action
-  login(username, password) {
+  @action login = (username, password) => {
     return new Promise((resolve, reject) => {
       axios.post(`/auth`, {username, password}).then(res => {
         cookie.save('JWT', res.data.access, {path: '/'});
@@ -19,10 +20,9 @@ class UserStore {
         reject(err);
       })
     })
-  }
+  };
 
-  @action
-  register(username, password, name, grade, cls, number) {
+  @action register = (username, password, name, grade, cls, number) => {
     return new Promise((resolve, reject) => {
       axios.post('/users', {
         username,
@@ -37,41 +37,40 @@ class UserStore {
         reject(err);
       })
     })
-  }
+  };
 
-  @action
-  logout() {
+  @action logout = () => {
     return new Promise((resolve) => {
       cookie.remove('JWT', {path: '/'});
       this.isLogin = false;
       resolve();
     })
-  }
+  };
 
-  @action
-  getUserData() {
+  @action getUserData = () => {
     return new Promise((resolve, reject) => {
       const jwt = cookie.load('JWT');
 
-      if (this.isLogin) {
-        if (jwt) {
-          axios.get('/users', {
-            headers: {
-              Authorization: `Bearer ${jwt}`
-            }
-          }).then(res => {
-            this.isLogin = true;
-            this.user = res.data;
-            resolve(res);
-          }).catch(err => {
-            reject(err)
-          })
-        } else {
-          reject("Token is not exists");
-        }
+      if (jwt) {
+        axios.get('/users', {
+          headers: {
+            Authorization: `Bearer ${jwt}`
+          }
+        }).then(res => {
+          this.isLogin = true;
+          this.user = res.data;
+          resolve(res);
+        }).catch(err => {
+          this.isLogin = false;
+          cookie.remove('JWT', {path: '/'});
+          reject(err)
+        })
+      } else {
+        this.isLogin = false;
+        reject("Token is not exists");
       }
     })
-  }
+  };
 
 }
 
