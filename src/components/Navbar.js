@@ -47,10 +47,12 @@ const Item = styled.span`
   }
 `;
 
+@inject('user')
+@observer
 class Navbar extends Component {
 
   render() {
-    const isLogin = false;
+    const {user} = this.props;
 
     return (
       <Wrapper className={'navbar'}>
@@ -60,7 +62,7 @@ class Navbar extends Component {
             <span>Planther</span>
           </Brand>
         </Link>
-        {isLogin ?
+        {user.isLogin ?
           <Menu>
             <Item style={{marginRight: '20px'}}>{/*TODO*/}</Item>
             <Item onClick={() => {
