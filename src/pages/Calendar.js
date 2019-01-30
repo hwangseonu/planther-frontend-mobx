@@ -8,6 +8,7 @@ import Day from '../components/Day';
 import utils from '../utils';
 
 import AddPlanModal from '../components/AddPlanModal';
+import PlanInfoModal from "../components/PlanInfoModal";
 
 const Wrapper = styled.div`
   display: flex;
@@ -115,12 +116,13 @@ class Calendar extends Component {
     return (
       <div id={'calendar'}>
         <AddPlanModal/>
-        <Link to={`/calendar/${year}/${month - 1}`}>
+        <PlanInfoModal/>
+        <a href={`/calendar/${year}/${month - 1}`}>
           <Prev className={'fas fa-chevron-left'}/>
-        </Link>
-        <Link to={`/calendar/${year}/${month + 1}`}>
+        </a>
+        <a href={`/calendar/${year}/${month + 1}`}>
           <Next className={'fas fa-chevron-right'}/>
-        </Link>
+        </a>
         <Navbar/>
         <Wrapper>
           <div>
