@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {observer, inject} from 'mobx-react';
+import cookie from 'react-cookies';
+import axios from 'axios';
 import styled from 'styled-components';
 
 const background = {
@@ -65,6 +67,24 @@ class Day extends Component {
     hover: false,
     plans: []
   };
+
+  componentDidMount() {
+    const jwt = cookie.load('JWT');
+
+    if (jwt) {
+      const {year, month, day} = this.props.date;
+      axios.get(`https://planther-api.herokuapp.com/plans/${year}/${month}/${day}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }).then(res => {
+        this.setState({plans: res.data});
+      }).catch(err => {
+        alert("오류가 발생했습니다.");
+        window.location.reload();
+      });
+    }
+  }
 
   render() {
     const {user} = this.props;
