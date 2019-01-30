@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import {observer, inject} from 'mobx-react';
 import styled from 'styled-components';
 
 const background = {
@@ -58,6 +58,8 @@ const Plan = styled.div`
   }
 `;
 
+@inject("user")
+@observer
 class Day extends Component {
   state = {
     hover: false,
@@ -65,12 +67,19 @@ class Day extends Component {
   };
 
   render() {
+    const {user} = this.props;
     return (
       <Wrapper onMouseOver={() => this.setState({hover: true})} onMouseLeave={() => this.setState({hover: false})}
                style={{background: this.state.plans.length > 0 ? '#eee' : null}}>
         <Header>
           <span>{this.props.date.day}</span>
-          {this.state.hover ? <Add className={'hidden fas fa-plus'} onClick={() => this.event.emit('show-addplan', this.props.date)}/> : null}
+          {this.state.hover ? <Add className={'hidden fas fa-plus'} onClick={() => {
+            if (user.isLogin) {
+              this.event.emit('show-addplan', this.props.date)
+            } else {
+              alert("먼저 로그인해주세요.");
+            }
+          }}/> : null}
         </Header>
         <Body>
           {this.state.plans.map((plan, i) => (

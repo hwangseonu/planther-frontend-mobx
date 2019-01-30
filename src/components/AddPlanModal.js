@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import cookie from 'react-cookies';
+import axios from 'axios';
 import styled from 'styled-components';
 
 import Loading from './Loading';
@@ -129,7 +131,37 @@ class AddPlanModal extends Component {
   }
 
   handleSubmit() {
+    const jwt = cookie.load('JWT');
 
+    if (jwt) {
+      const {title, content, type} = this.state;
+      const {year, month, day} = this.state.date;
+
+      if (title && content && type) {
+        this.setState({loading: true});
+        axios.post(`https://planther-api.herokuapp.com/plans`, {
+          title,
+          content,
+          type,
+          year,
+          month,
+          day
+        }, {headers: {Authorization: `Bearer ${jwt}`}}).then(res => {
+          this.setState({loading: false});
+          alert("추가되었습니다.");
+          window.location.reload();
+        }).catch(err => {
+          this.setState({loading: false});
+          alert("오류가 발생했습니다.");
+          window.location.reload();
+        })
+      } else {
+        alert("빈칸이 있습니다.");
+      }
+    } else {
+      alert("먼저 로그인해주세요.");
+      window.location.reload();
+    }
   }
 
   render() {
